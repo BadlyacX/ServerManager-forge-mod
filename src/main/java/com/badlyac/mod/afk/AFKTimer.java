@@ -7,13 +7,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -43,6 +43,19 @@ public class AFKTimer {
                 .executes(context -> {
                     ServerPlayer player = context.getSource().getPlayerOrException();
                     UUID playerId = player.getUUID();
+
+                    if (player.getVehicle() instanceof Boat) {
+                        player.sendSystemMessage(Component.literal("你在船上，無法使用 /afk 指令")
+                                .withStyle(ChatFormatting.RED));
+                        return 0;
+                    }
+
+                    if (player.isSleeping()) {
+                        player.sendSystemMessage(Component.literal("你在床上，無法使用 /afk 指令")
+                                .withStyle(ChatFormatting.RED));
+                        return 0;
+                    }
+
                     if (!afkStatusMap.getOrDefault(playerId, false)) {
                         Component afkMessage = Component.literal(player.getName().getString() + " 離開了...")
                                 .withStyle(ChatFormatting.GRAY);
@@ -76,8 +89,6 @@ public class AFKTimer {
            originalGameModeMap.remove(playerId);
        }
     }
-
-
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {}
