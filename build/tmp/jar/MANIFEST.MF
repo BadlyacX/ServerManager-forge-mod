@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Specification-Title: servermanager
+Specification-Vendor: BADlyAC
+Specification-Version: 1
+Implementation-Title: ServerManager - forge mod
+Implementation-Version: 0.1-1.20.1
+Implementation-Vendor: BADlyAC
+Implementation-Timestamp: 2025-01-25T23:13:41+0800
+MixinConfigs: mixins.servermanager.json
+
